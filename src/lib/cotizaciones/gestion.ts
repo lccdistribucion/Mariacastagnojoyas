@@ -130,3 +130,19 @@ export const LEYES_INICIALES: DatosLey[] = [
   { nombre: "Oro 9k", metal: "oro", quilates: 9, milesimos: 375, ajusteVentaPct: 0, ajusteCompraPct: 0, precioManualGramo: null, activo: true, orden: 5 },
   { nombre: "Plata 925", metal: "plata", quilates: null, milesimos: 925, ajusteVentaPct: 0, ajusteCompraPct: 0, precioManualGramo: null, activo: true, orden: 6 },
 ];
+
+/**
+ * Otros materiales sin cotización automática. Se agregan por nombre si faltan (también en bases ya creadas).
+ * El precio del gramo arranca en $ 1 y se carga a mano en Configuración → Cotizaciones.
+ */
+export const LEYES_OTROS_MATERIALES: DatosLey[] = ["Alpaca", "Bronce", "Acero", "Piedras"].map((nombre, i) => ({
+  nombre,
+  metal: "otro" as const,
+  quilates: null,
+  milesimos: 1000,
+  ajusteVentaPct: 0,
+  ajusteCompraPct: 0,
+  precioManualGramo: 100,
+  activo: true,
+  orden: 7 + i,
+}));

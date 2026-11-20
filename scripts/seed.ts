@@ -8,7 +8,7 @@ import { eq } from "drizzle-orm";
 import { db, leyesMetal, usuarios } from "../src/db/index";
 import { SISTEMA } from "../src/lib/auditoria";
 import { guardarConfig, leerUna } from "../src/lib/config";
-import { guardarLey, LEYES_INICIALES } from "../src/lib/cotizaciones/gestion";
+import { guardarLey, LEYES_INICIALES, LEYES_OTROS_MATERIALES } from "../src/lib/cotizaciones/gestion";
 import { crearUsuario } from "../src/lib/usuarios";
 import { categorias, listasPrecios, puntosVenta, ubicaciones } from "../src/db/index";
 import { CATEGORIAS_INICIALES, LISTAS_INICIALES, UBICACIONES_INICIALES } from "../src/lib/stock/catalogos";
@@ -27,6 +27,10 @@ async function main() {
     for (const l of LEYES_INICIALES) await guardarLey(null, l, SISTEMA);
     console.log(`Leyes de metal iniciales cargadas (${LEYES_INICIALES.length}).`);
   }
+  const nombresLeyes = new Set((await db.select({ nombre: leyesMetal.nombre }).from(leyesMetal)).map((l) => l.nombre));
+  const faltantes = LEYES_OTROS_MATERIALES.filter((l) => !nombresLeyes.has(l.nombre));
+  for (const l of faltantes) await guardarLey(null, l, SISTEMA);
+  if (faltantes.length) console.log(`Materiales agregados: ${faltantes.map((l) => l.nombre).join(", ")} (cargar su precio por gramo en Configuración → Cotizaciones).`);
   if (!(await db.select({ id: categorias.id }).from(categorias)).length) {
     await db.insert(categorias).values(CATEGORIAS_INICIALES.map(([nombre, prefijo], i) => ({ nombre, prefijo, orden: i })));
     await db.insert(ubicaciones).values(UBICACIONES_INICIALES.map((nombre, i) => ({ nombre, orden: i })));
