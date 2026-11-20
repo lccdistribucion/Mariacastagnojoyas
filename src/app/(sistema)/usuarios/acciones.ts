@@ -60,6 +60,12 @@ export async function accionUsuario(_prev: EstadoForm, form: FormData): Promise<
       r = { ok: "Usuario reactivado." };
     } else if (que === "reiniciar") {
       r = { ok: "Clave reiniciada.", claveTemporal: await reiniciarClave(id, actor) };
+    } else if (que === "poner_clave") {
+      const clave = String(form.get("clave") ?? "");
+      if (!clave) throw new ErrorValidacion("Escribí la clave nueva.");
+      const obligar = form.get("obligarCambio") === "on";
+      await reiniciarClave(id, actor, clave, obligar);
+      r = { ok: obligar ? "Clave cambiada. Al ingresar va a tener que elegir una propia." : "Clave cambiada." };
     } else if (que === "desbloquear") {
       await desbloquearUsuario(id, actor);
       r = { ok: "Ingreso desbloqueado." };

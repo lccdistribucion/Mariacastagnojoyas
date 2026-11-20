@@ -199,22 +199,34 @@ export async function cambiarEstadoUsuario(id: number, activo: boolean, actor: A
   });
 }
 
-/** El admin reinicia la clave de otra persona: genera una temporal y la obliga a cambiarla al entrar. */
-export async function reiniciarClave(id: number, actor: Actor) {
-  const temporal = claveTemporal();
+/**
+ * El admin cambia la clave de otra persona. Sin `claveElegida` genera una temporal; con `claveElegida` usa la que
+ * escribió el admin. `obligarCambio` hace que la persona tenga que elegir su propia clave al entrar.
+ */
+export async function reiniciarClave(id: number, actor: Actor, claveElegida?: string, obligarCambio = true) {
+  const [existente] = await db.select({ usuario: usuarios.usuario }).from(usuarios).where(eq(usuarios.id, id));
+  if (!existente) throw new ErrorValidacion("El usuario no existe.");
+  if (claveElegida) {
+    const problema = problemaClave(claveElegida, existente.usuario);
+    if (problema) throw new ErrorValidacion(problema);
+  }
+  const temporal = claveElegida ?? claveTemporal();
+  const debeCambiar = claveElegida ? obligarCambio : true;
   const hash = await hashClave(temporal);
   await db.transaction(async (tx) => {
     const [u] = await tx.select().from(usuarios).where(eq(usuarios.id, id));
     if (!u) throw new ErrorValidacion("El usuario no existe.");
     await tx
       .update(usuarios)
-      .set({ claveHash: hash, debeCambiarClave: true, versionSesion: u.versionSesion + 1, actualizadoEn: new Date() })
+      .set({ claveHash: hash, debeCambiarClave: debeCambiar, versionSesion: u.versionSesion + 1, actualizadoEn: new Date() })
       .where(eq(usuarios.id, id));
     await auditar(tx, actor, {
       accion: "cambio_clave",
       entidad: "usuario",
       entidadId: id,
-      descripcion: `Reinició la clave de «${u.usuario}» (clave temporal, debe cambiarla al entrar)`,
+      descripcion: claveElegida
+        ? `Le puso una clave elegida a «${u.usuario}»${debeCambiar ? " (debe cambiarla al entrar)" : ""}`
+        : `Reinició la clave de «${u.usuario}» (clave temporal, debe cambiarla al entrar)`,
     });
   });
   await limpiarFallos(claveUsuario((await obtenerUsuario(id))!.usuario));

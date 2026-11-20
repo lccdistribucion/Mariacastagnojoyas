@@ -135,6 +135,18 @@ test("clave temporal: obliga a cambiarla, y el cambio cierra las otras sesiones"
   assert.equal(await m.ingreso.validarSesion(r2.token), null, "las otras sesiones se cierran");
 });
 
+test("el admin puede elegir la clave de otro usuario (con o sin obligar a cambiarla)", async () => {
+  const v = (await m.usuarios.listarUsuarios()).find((u) => u.usuario === "vende")!;
+  await assert.rejects(m.usuarios.reiniciarClave(v.id, SIS, "corta1"), /8 caracteres/);
+  await assert.rejects(m.usuarios.reiniciarClave(v.id, SIS, "vende12345"), /nombre de usuario/);
+  await m.usuarios.reiniciarClave(v.id, SIS, "ClaveElegida7", false);
+  const r = await m.ingreso.intentarIngreso("vende", "ClaveElegida7", { ip: "9.9.9.9" });
+  assert.ok(r.ok && !r.debeCambiarClave);
+  await m.usuarios.reiniciarClave(v.id, SIS, "OtraClave88", true);
+  const r2 = await m.ingreso.intentarIngreso("vende", "OtraClave88", { ip: "9.9.9.9" });
+  assert.ok(r2.ok && r2.debeCambiarClave);
+});
+
 test("autorización con clave de admin: válida solo con un administrador", async () => {
   const sol = { id: 2, nombre: "Vendedora Prueba" };
   const ok = await m.autorizacion.autorizarConAdmin(sol, { usuario: "admin", clave: "Clave1234" }, "Descuento 20 %");
