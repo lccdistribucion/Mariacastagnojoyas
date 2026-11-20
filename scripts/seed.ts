@@ -5,12 +5,12 @@
  *   lucia     / Mostrador2026  → Usuario (vendedora)
  */
 import { eq } from "drizzle-orm";
-import { db, leyesMetal, usuarios } from "../src/db";
+import { db, leyesMetal, usuarios } from "../src/db/index";
 import { SISTEMA } from "../src/lib/auditoria";
 import { guardarConfig, leerUna } from "../src/lib/config";
 import { guardarLey, LEYES_INICIALES } from "../src/lib/cotizaciones/gestion";
 import { crearUsuario } from "../src/lib/usuarios";
-import { categorias, listasPrecios, puntosVenta, ubicaciones } from "../src/db";
+import { categorias, listasPrecios, puntosVenta, ubicaciones } from "../src/db/index";
 import { CATEGORIAS_INICIALES, LISTAS_INICIALES, UBICACIONES_INICIALES } from "../src/lib/stock/catalogos";
 import { cargarDemo, cargarDemoM4 } from "../src/lib/stock/demo";
 import { cargarMediosIniciales } from "../src/lib/ventas/medios";

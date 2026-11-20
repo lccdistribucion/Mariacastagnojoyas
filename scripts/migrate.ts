@@ -4,7 +4,7 @@
  */
 import { existsSync } from "node:fs";
 import { migrate } from "drizzle-orm/libsql/migrator";
-import { db, RUTA_BASE } from "../src/db";
+import { db, RUTA_BASE } from "../src/db/index";
 import { crearCopia } from "../src/lib/backup";
 
 async function main() {
