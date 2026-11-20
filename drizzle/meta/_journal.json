@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1794946266487,
+      "tag": "0000_modulo1_seguridad",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1794947652590,
+      "tag": "0001_modulo2_cotizaciones",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1795012604216,
+      "tag": "0002_modulo3_stock",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1795016862520,
+      "tag": "0003_modulo4_clientes_proveedores",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1795025901156,
+      "tag": "0004_modulo5_ventas",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1795042195402,
+      "tag": "0005_modulo6_tesoreria",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1795105812758,
+      "tag": "0006_modulo7_facturacion",
+      "breakpoints": true
+    }
+  ]
+}
