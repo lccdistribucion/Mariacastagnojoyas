@@ -5,7 +5,7 @@
  *   lucia     / Mostrador2026  → Usuario (vendedora)
  */
 import { eq } from "drizzle-orm";
-import { db, leyesMetal, usuarios } from "../src/db/index";
+import { db, leyesMetal, productos, usuarios } from "../src/db/index";
 import { SISTEMA } from "../src/lib/auditoria";
 import { guardarConfig, leerUna } from "../src/lib/config";
 import { guardarLey, LEYES_INICIALES, LEYES_OTROS_MATERIALES } from "../src/lib/cotizaciones/gestion";
@@ -31,6 +31,19 @@ async function main() {
   const faltantes = LEYES_OTROS_MATERIALES.filter((l) => !nombresLeyes.has(l.nombre));
   for (const l of faltantes) await guardarLey(null, l, SISTEMA);
   if (faltantes.length) console.log(`Materiales agregados: ${faltantes.map((l) => l.nombre).join(", ")} (cargar su precio por gramo en Configuración → Cotizaciones).`);
+  // «Piedras» se vende por unidad (artículo por cantidad, precio fijo): no es una ley de metal por gramo.
+  const [leyPiedras] = await db.select().from(leyesMetal).where(eq(leyesMetal.nombre, "Piedras"));
+  if (leyPiedras?.activo && !(await db.select({ id: productos.id }).from(productos).where(eq(productos.leyId, leyPiedras.id)).limit(1)).length) {
+    await db.update(leyesMetal).set({ activo: false }).where(eq(leyesMetal.id, leyPiedras.id));
+    console.log("«Piedras» se quitó de Metal / ley: ahora se carga por unidad.");
+  }
+  if (!(await db.select({ id: categorias.id }).from(categorias).where(eq(categorias.nombre, "Piedras"))).length) {
+    const todas = await db.select({ orden: categorias.orden }).from(categorias);
+    if (todas.length) {
+      await db.insert(categorias).values({ nombre: "Piedras", prefijo: "PIE", orden: Math.max(...todas.map((c) => c.orden)) + 1 });
+      console.log("Categoría «Piedras» agregada.");
+    }
+  }
   if (!(await db.select({ id: categorias.id }).from(categorias)).length) {
     await db.insert(categorias).values(CATEGORIAS_INICIALES.map(([nombre, prefijo], i) => ({ nombre, prefijo, orden: i })));
     await db.insert(ubicaciones).values(UBICACIONES_INICIALES.map((nombre, i) => ({ nombre, orden: i })));

@@ -65,7 +65,7 @@ export async function guardarLista(id: number | null, d: { nombre: string; ajust
 
 export const CATEGORIAS_INICIALES = [
   ["Anillos", "ANI"], ["Alianzas", "ALI"], ["Aros", "ARO"], ["Collares", "COL"], ["Cadenas", "CAD"], ["Pulseras", "PUL"],
-  ["Dijes", "DIJ"], ["Relojes", "REL"], ["Accesorios", "ACC"], ["Packaging", "PAC"], ["Insumos", "INS"],
+  ["Dijes", "DIJ"], ["Relojes", "REL"], ["Accesorios", "ACC"], ["Packaging", "PAC"], ["Insumos", "INS"], ["Piedras", "PIE"],
 ] as const;
 export const UBICACIONES_INICIALES = ["Vitrina principal", "Vitrina 2", "Caja fuerte", "Exhibidor", "Taller", "Depósito"];
 /** Las listas arrancan en 0 %: los recargos y descuentos los define la dueña. */

@@ -135,7 +135,7 @@ export const LEYES_INICIALES: DatosLey[] = [
  * Otros materiales sin cotización automática. Se agregan por nombre si faltan (también en bases ya creadas).
  * El precio del gramo arranca en $ 1 y se carga a mano en Configuración → Cotizaciones.
  */
-export const LEYES_OTROS_MATERIALES: DatosLey[] = ["Alpaca", "Bronce", "Acero", "Piedras"].map((nombre, i) => ({
+export const LEYES_OTROS_MATERIALES: DatosLey[] = ["Alpaca", "Bronce", "Acero"].map((nombre, i) => ({
   nombre,
   metal: "otro" as const,
   quilates: null,
