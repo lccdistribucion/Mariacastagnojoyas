@@ -30,7 +30,7 @@ async function main() {
   const nombresLeyes = new Set((await db.select({ nombre: leyesMetal.nombre }).from(leyesMetal)).map((l) => l.nombre));
   const faltantes = LEYES_OTROS_MATERIALES.filter((l) => !nombresLeyes.has(l.nombre));
   for (const l of faltantes) await guardarLey(null, l, SISTEMA);
-  if (faltantes.length) console.log(`Materiales agregados: ${faltantes.map((l) => l.nombre).join(", ")} (cargar su precio por gramo en Configuración → Cotizaciones).`);
+  if (faltantes.length) console.log(`Materiales agregados: ${faltantes.map((l) => l.nombre).join(", ")} (se venden por pieza, con precio fijo).`);
   // «Piedras» se vende por unidad (artículo por cantidad, precio fijo): no es una ley de metal por gramo.
   const [leyPiedras] = await db.select().from(leyesMetal).where(eq(leyesMetal.nombre, "Piedras"));
   if (leyPiedras?.activo && !(await db.select({ id: productos.id }).from(productos).where(eq(productos.leyId, leyPiedras.id)).limit(1)).length) {

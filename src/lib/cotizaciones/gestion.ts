@@ -133,7 +133,8 @@ export const LEYES_INICIALES: DatosLey[] = [
 
 /**
  * Otros materiales sin cotización automática. Se agregan por nombre si faltan (también en bases ya creadas).
- * El precio del gramo arranca en $ 1 y se carga a mano en Configuración → Cotizaciones.
+ * Se venden por pieza (precio fijo): el precio del gramo ($ 1) es solo un valor de relleno y no se usa salvo que
+ * una pieza se cargue «por gramo».
  */
 export const LEYES_OTROS_MATERIALES: DatosLey[] = ["Alpaca", "Bronce", "Acero"].map((nombre, i) => ({
   nombre,
